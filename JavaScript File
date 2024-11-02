@@ -1,0 +1,41 @@
+const apiKey = 'YOUR_API_KEY'; // Replace with your OpenWeatherMap API key
+
+document.getElementById('getWeather').addEventListener('click', () => {
+    const location = document.getElementById('locationInput').value;
+    fetchWeather(location);
+});
+
+document.getElementById('getLocation').addEventListener('click', () => {
+    navigator.geolocation.getCurrentPosition(position => {
+        const { latitude, longitude } = position.coords;
+        fetchWeatherByCoordinates(latitude, longitude);
+    });
+});
+
+function fetchWeather(location) {
+    fetch(`/weather?city=${location}`)
+        .then(response => response.json())
+        .then(data => displayWeather(data))
+        .catch(err => console.error(err));
+}
+
+function fetchWeatherByCoordinates(lat, lon) {
+    fetch(`/weather?lat=${lat}&lon=${lon}`)
+        .then(response => response.json())
+        .then(data => displayWeather(data))
+        .catch(err => console.error(err));
+}
+
+function displayWeather(data) {
+    const weatherResult = document.getElementById('weatherResult');
+    if (data.main) {
+        const temperature = (data.main.temp - 273.15).toFixed(2); // Convert Kelvin to Celsius
+        weatherResult.innerHTML = `
+            <h2>${data.name}</h2>
+            <p>Temperature: ${temperature} °C</p>
+            <p>Weather: ${data.weather[0].description}</p>
+        `;
+    } else {
+        weatherResult.innerHTML = `<p>Error fetching weather data.</p>`;
+    }
+}
