@@ -1,0 +1,4 @@
+mkdir weather-app
+cd weather-app
+npm init -y
+npm install express axios
